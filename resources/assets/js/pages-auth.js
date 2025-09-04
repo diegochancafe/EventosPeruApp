@@ -1,114 +1,127 @@
 /**
  *  Pages Authentication
  */
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css'; // for React, Vue and Svelte
+
 'use strict';
 
-document.addEventListener('DOMContentLoaded', function () {
-  (() => {
-    const formAuthentication = document.querySelector('#formAuthentication');
+// VARIABLES
+const notify = new Notyf();
+const API_BASE_URL = "http://localhost:8000/api";
 
-    // Form validation for Add new record
-    if (formAuthentication && typeof FormValidation !== 'undefined') {
-      FormValidation.formValidation(formAuthentication, {
-        fields: {
-          username: {
-            validators: {
-              notEmpty: {
-                message: 'Please enter username'
-              },
-              stringLength: {
-                min: 6,
-                message: 'Username must be more than 6 characters'
-              }
-            }
-          },
-          email: {
-            validators: {
-              notEmpty: {
-                message: 'Please enter your email'
-              },
-              emailAddress: {
-                message: 'Please enter a valid email address'
-              }
-            }
-          },
-          'email-username': {
-            validators: {
-              notEmpty: {
-                message: 'Please enter email / username'
-              },
-              stringLength: {
-                min: 6,
-                message: 'Username must be more than 6 characters'
-              }
-            }
-          },
-          password: {
-            validators: {
-              notEmpty: {
-                message: 'Please enter your password'
-              },
-              stringLength: {
-                min: 6,
-                message: 'Password must be more than 6 characters'
-              }
-            }
-          },
-          'confirm-password': {
-            validators: {
-              notEmpty: {
-                message: 'Please confirm password'
-              },
-              identical: {
-                compare: () => formAuthentication.querySelector('[name="password"]').value,
-                message: 'The password and its confirmation do not match'
-              },
-              stringLength: {
-                min: 6,
-                message: 'Password must be more than 6 characters'
-              }
-            }
-          },
-          terms: {
-            validators: {
-              notEmpty: {
-                message: 'Please agree to terms & conditions'
-              }
-            }
-          }
-        },
-        plugins: {
-          trigger: new FormValidation.plugins.Trigger(),
-          bootstrap5: new FormValidation.plugins.Bootstrap5({
-            eleValidClass: '',
-            rowSelector: '.form-control-validation'
-          }),
-          submitButton: new FormValidation.plugins.SubmitButton(),
-          defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
-          autoFocus: new FormValidation.plugins.AutoFocus()
-        },
-        init: instance => {
-          instance.on('plugins.message.placed', e => {
-            if (e.element.parentElement.classList.contains('input-group')) {
-              e.element.parentElement.insertAdjacentElement('afterend', e.messageElement);
-            }
-          });
-        }
-      });
+// -- EVENTS
+const loginForm = document.getElementById("formLogin");
+if (loginForm) {
+    loginForm.addEventListener("submit", handleLogin);
+}
+
+const registerForm = document.getElementById("formRegister");
+if (registerForm) {
+    registerForm.addEventListener("submit", handleSignUp);
+}
+
+// FUNCTIONS
+
+// Función que maneja el evento
+async function handleLogin(event) {
+    event.preventDefault(); // Evita que se recargue la página
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    // Validaciones front-end (opcionales, ya que el backend también valida)
+    if (!email || !password) {
+        showMessage("Todos los campos son obligatorios", "error");
+        return;
+    }
+    if (password.length < 8) {
+        showMessage("La contraseña debe tener al menos 8 caracteres", "error");
+        return;
     }
 
-    // Two Steps Verification for numeral input mask
-    const numeralMaskElements = document.querySelectorAll('.numeral-mask');
+    // Llamar al servicio
+    await loginUser({ email, password });
+}
 
-    // Format function for numeral mask
-    const formatNumeral = value => value.replace(/\D/g, ''); // Only keep digits
 
-    if (numeralMaskElements.length > 0) {
-      numeralMaskElements.forEach(numeralMaskEl => {
-        numeralMaskEl.addEventListener('input', event => {
-          numeralMaskEl.value = formatNumeral(event.target.value);
+// Función que maneja el evento
+async function handleSignUp(event) {
+    event.preventDefault(); // Evita que se recargue la página
+
+    const name = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    // Validaciones front-end (opcionales, ya que el backend también valida)
+    if (!name || !email || !password) {
+        showMessage("Todos los campos son obligatorios", "error");
+        return;
+    }
+    if (password.length < 8) {
+        showMessage("La contraseña debe tener al menos 8 caracteres", "error");
+        return;
+    }
+
+    // Llamar al servicio
+    await registerUser({ name, email, password });
+}
+
+
+// SERVICES
+
+// Función para consumir el servicio
+async function loginUser(userData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
         });
-      });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("token", data.token); // Save token
+            showMessage("Inicio de sesión exitoso ✅", "success");
+            window.location.replace(baseUrl);
+        } else {
+            showMessage("Error: " + (data.message || "Credenciales incorrectas ❌"), "error");
+        }
+    } catch (error) {
+        showMessage("Error de conexión con el servidor ❌", "error");
     }
-  })();
-});
+}
+
+// Función para consumir el servicio
+async function registerUser(userData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/user`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showMessage("Usuario creado con éxito ✅", "success");
+            window.location.replace(baseUrl + 'auth/login-basic');
+        } else {
+            showMessage("Error: " + (data.message || "No se pudo registrar"), "error");
+        }
+    } catch (error) {
+        showMessage("Error de conexión con el servidor ❌", "error");
+    }
+}
+
+
+
+// Función para mostrar mensajes en pantalla
+function showMessage(message, type) {
+    if (type === "success") {
+        notify.success(message);
+    } else if (type === "error") {
+        notify.error(message);
+    }
+}

@@ -1,6 +1,7 @@
 <?php
 // Variables
 return [
+  "systemName" => "Eventos Perú",
   "creatorName" => "Pixinvent",
   "creatorUrl" => "https://pixinvent.com",
   "templateName" => "Vuexy",
