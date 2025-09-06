@@ -4,7 +4,7 @@
 
 @extends('layouts/layoutMaster')
 
-@section('title', 'Login Basic - Pages')
+@section('title', 'Register Basic - Pages')
 
 @section('vendor-style')
   @vite(['resources/assets/vendor/libs/@form-validation/form-validation.scss'])
@@ -19,14 +19,14 @@
 @endsection
 
 @section('page-script')
-  @vite(['resources/assets/js/pages-auth.js'])
+  @vite(['resources/assets/js/modules/pages-auth.js'])
 @endsection
 
 @section('content')
   <div class="container-xxl">
     <div class="authentication-wrapper authentication-basic container-p-y">
       <div class="authentication-inner py-6">
-        <!-- Login -->
+        <!-- Register Card -->
         <div class="card">
           <div class="card-body">
             <!-- Logo -->
@@ -37,14 +37,18 @@
               </a>
             </div>
             <!-- /Logo -->
-            <h4 class="mb-1">Welcome to {{ config('variables.systemName') }}! 👋</h4>
-            <p class="mb-6">Please sign-in to your account and start the adventure</p>
+            <h4 class="mb-1">Adventure starts here 🚀</h4>
+            <p class="mb-6">Make your app management easy and fun!</p>
 
-            <form id="formLogin" class="mb-4">
+            <form id="formRegister" class="mb-6">
               <div class="mb-6 form-control-validation">
-                <label for="email" class="form-label">Email or Username</label>
-                <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email"
-                  autofocus />
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username"
+                  placeholder="Enter your username" autofocus />
+              </div>
+              <div class="mb-6 form-control-validation">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
               </div>
               <div class="mb-6 form-password-toggle form-control-validation">
                 <label class="form-label" for="password">Password</label>
@@ -55,26 +59,22 @@
                   <span class="input-group-text cursor-pointer"><i class="icon-base ti tabler-eye-off"></i></span>
                 </div>
               </div>
-              <div class="my-8">
-                <div class="d-flex justify-content-between">
-                  <div class="form-check mb-0 ms-2">
-                    <input class="form-check-input" type="checkbox" id="remember-me" />
-                    <label class="form-check-label" for="remember-me"> Remember Me </label>
-                  </div>
-                  <a href="javascript:void(0);">
-                    <p class="mb-0">Forgot Password?</p>
-                  </a>
+              <div class="my-8 form-control-validation">
+                <div class="form-check mb-0 ms-2">
+                  <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                  <label class="form-check-label" for="terms-conditions">
+                    I agree to
+                    <a href="javascript:void(0);">privacy policy & terms</a>
+                  </label>
                 </div>
               </div>
-              <div class="mb-6">
-                <button type="submit" class="btn btn-primary d-grid w-100">Login</button>
-              </div>
+              <button type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
             </form>
 
             <p class="text-center">
-              <span>New on our platform?</span>
-              <a href="{{ url('auth/register-basic') }}">
-                <span>Create an account</span>
+              <span>Already have an account?</span>
+              <a href="{{ url('auth/login-basic') }}">
+                <span>Sign in instead</span>
               </a>
             </p>
 
@@ -101,7 +101,7 @@
             </div>
           </div>
         </div>
-        <!-- /Login -->
+        <!-- Register Card -->
       </div>
     </div>
   </div>

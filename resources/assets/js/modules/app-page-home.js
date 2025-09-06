@@ -21,6 +21,7 @@ if (loginButton) {
 
 // FUNCTIONS
 
+
 // Función para cerrar sesión
 async function logoutUser() {
     const token = localStorage.getItem("token");
@@ -40,7 +41,7 @@ async function logoutUser() {
         if (response.ok) {
             showMessage("Cierre de sesión exitoso ✅", "success");
             localStorage.removeItem("token");
-            window.location.replace(baseUrl + "auth/login-basic");
+            window.location.replace(baseUrl + "auth/login");
         } else {
             showMessage("Error: " + (data.message || "No se pudo cerrar sesión ❌"), "error");
         }
@@ -49,37 +50,37 @@ async function logoutUser() {
     }
 }
 
-fetch(API_BASE_URL + "/user")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        const tbody = document.getElementById("userTableBody");
-        tbody.innerHTML = "";
+// fetch(API_BASE_URL + "/user")
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         const tbody = document.getElementById("userTableBody");
+//         tbody.innerHTML = "";
 
-        if (data.data.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='3'>No hay usuarios</td></tr>";
-            return;
-        }
+//         if (data.data.length === 0) {
+//             tbody.innerHTML = "<tr><td colspan='3'>No hay usuarios</td></tr>";
+//             return;
+//         }
 
-        data.data.forEach(user => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                `;
-            tbody.appendChild(tr);
-        });
-    })
-    .catch(error => {
-        console.error("Error al obtener usuarios:", error);
-        const tbody = document.getElementById("userTableBody");
-        tbody.innerHTML = "<tr><td colspan='3'>Error al cargar usuarios</td></tr>";
-    });
+//         data.data.forEach(user => {
+//             const tr = document.createElement("tr");
+//             tr.innerHTML = `
+//                     <td>${user.id}</td>
+//                     <td>${user.name}</td>
+//                     <td>${user.email}</td>
+//                 `;
+//             tbody.appendChild(tr);
+//         });
+//     })
+//     .catch(error => {
+//         console.error("Error al obtener usuarios:", error);
+//         const tbody = document.getElementById("userTableBody");
+//         tbody.innerHTML = "<tr><td colspan='3'>Error al cargar usuarios</td></tr>";
+//     });
 
 // Función para mostrar mensajes en pantalla
 function showMessage(message, type) {

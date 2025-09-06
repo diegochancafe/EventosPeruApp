@@ -7,31 +7,28 @@
       "slug": "pages-home"
     },
     {
-      "url": "/page-2",
-      "icon": "menu-icon icon-base ti tabler-file",
-      "name": "Page 2",
-      "slug": "pages-page-2"
+      "url": "/page-services",
+      "icon": "menu-icon icon-base ti tabler-shopping-cart",
+      "name": "Servicios",
+      "slug": "pages-services"
     },
     {
-      "url": "/pages/misc-error",
-      "name": "Error",
-      "icon": "menu-icon icon-base ti tabler-alert-triangle",
-      "slug": "pages-misc-error",
-      "target": "_blank"
+      "url": "/page-events",
+      "icon": "menu-icon icon-base ti tabler-gift",
+      "name": "Eventos",
+      "slug": "pages-events"
     },
     {
-      "url": "/auth/login-basic",
-      "name": "Login",
-      "icon": "menu-icon icon-base ti tabler-login",
-      "slug": "auth-login-basic",
-      "target": "_blank"
+      "url": "/page-categories",
+      "icon": "menu-icon icon-base ti tabler-receipt",
+      "name": "Categorías",
+      "slug": "pages-categories"
     },
     {
-      "url": "/auth/register-basic",
-      "name": "Register",
+      "url": "/page-users",
       "icon": "menu-icon icon-base ti tabler-user",
-      "slug": "auth-register-basic",
-      "target": "_blank"
+      "name": "Usuarios",
+      "slug": "pages-users"
     }
   ]
 }
