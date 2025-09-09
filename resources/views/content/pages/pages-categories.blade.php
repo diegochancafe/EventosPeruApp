@@ -5,7 +5,7 @@
 @extends('layouts/layoutMaster')
 
 @section('page-script')
-  @vite(['resources/assets/js/modules/app-page-home.js'])
+  @vite(['resources/assets/js/modules/app-page-categories.js'])
 @endsection
 
 @section('title', 'Categorías')
@@ -19,7 +19,7 @@
       <tr>
         <th>ID</th>
         <th>Nombre</th>
-        <th>Email</th>
+        <th>Descripcion</th>
       </tr>
     </thead>
     <tbody id="categoryTableBody">

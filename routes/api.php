@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UserController;
 
@@ -11,4 +12,5 @@ Route::post('/login', [UserController::class, 'login']); // login
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'index']); // get user info
     Route::post('/logout', [UserController::class, 'logout']); // logout
+    Route::get('/category', [CategoryController::class, 'index']);
 });
