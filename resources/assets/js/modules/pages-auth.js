@@ -106,7 +106,7 @@ async function registerUser(userData) {
 
         if (response.ok) {
             showMessage("Usuario creado con éxito ✅", "success");
-            window.location.replace(baseUrl + 'auth/login-basic');
+            window.location.replace(baseUrl + 'auth/login');
         } else {
             showMessage("Error: " + (data.message || "No se pudo registrar"), "error");
         }

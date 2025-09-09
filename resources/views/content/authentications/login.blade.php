@@ -73,7 +73,7 @@
 
             <p class="text-center">
               <span>New on our platform?</span>
-              <a href="{{ url('auth/register-basic') }}">
+              <a href="{{ url('auth/register') }}">
                 <span>Create an account</span>
               </a>
             </p>
