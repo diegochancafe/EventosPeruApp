@@ -74,7 +74,7 @@ class UserController extends Controller
     }
 
     // Store function to create a new user
-    public function store(Request $request)
+    public function register(Request $request)
     {
         try {
             // Validate the request data
@@ -99,6 +99,49 @@ class UserController extends Controller
             // Error validation
             return response()->json([
                 // 'message' => 'Error de validación',
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+                'status' => 'error',
+            ], 422);
+        } catch (\Exception $e) {
+            // Other errors
+            return response()->json([
+                'message' => 'Error al crear el usuario',
+                'status' => 'error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Store function to create a new user
+    public function store(Request $request)
+    {
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'role' => 'required|string|in:admin,client,provider',
+                'phone' => 'string|max:20',
+            ]);
+            // Create the user
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => Hash::make($validatedData['password']),
+                'role' => $validatedData['role'],
+                'phone' => $validatedData['phone']
+            ]);
+            // Success response
+            return response()->json([
+                'data' => $user,
+                'message' => 'Usuario creado con éxito',
+                'status' => 'success',
+            ], 201);
+        } catch (ValidationException $e) {
+            // Error validation
+            return response()->json([
                 'message' => $e->getMessage(),
                 'errors' => $e->errors(),
                 'status' => 'error',
