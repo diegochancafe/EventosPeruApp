@@ -13,6 +13,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']); // logout
     Route::get('/category', [CategoryController::class, 'index']);
 
-    Route::get('/user', [UserController::class, 'index']); // get user info
+    Route::get('/users', [UserController::class, 'index']); // get user info
     Route::post('/user', [UserController::class, 'store']); // create user
+    Route::get('/user/{id}', [UserController::class, 'show']); // get user info
+    Route::put('/user/{id}', [UserController::class, 'update']); // actualizar
+    Route::delete('/user/{id}', [UserController::class, 'destroy']); // eliminar
+
 });

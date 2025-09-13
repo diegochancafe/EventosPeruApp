@@ -19,6 +19,13 @@ if (createButton) {
     });
 }
 
+const editButton = document.getElementById("editButton");
+if (editButton) {
+    editButton.addEventListener("click", (event) => {
+        handleUserUpdate();          // Llama tu función de login
+    });
+}
+
 // Limpiar el modal al cerrarlo
 document.addEventListener('hidden.bs.modal', function (event) {
     if (event.target.id === 'createUserModal') {
@@ -38,6 +45,61 @@ document.addEventListener('hidden.bs.modal', function (event) {
     }
 });
 
+// Detectar clic en botón Editar
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edit-btn'); // busca si se hizo clic en un botón con esa clase
+    if (btn) {
+        const id = btn.getAttribute('data-id'); // recupera el atributo
+        getUserById(id)
+    }
+});
+
+// Detectar clic en botón Eliminar
+document.addEventListener('click', (e) => {
+    const deleteButton = e.target.closest('.delete-btn'); // busca si se hizo clic en un botón con esa clase
+    if (deleteButton) {
+        const id = deleteButton.getAttribute('data-id'); // recupera el atributo
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¡No podrás revertir esto!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Si, eliminar!',
+            customClass: {
+                confirmButton: 'btn btn-primary me-2 waves-effect waves-light',
+                cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+            },
+            buttonsStyling: false,
+            preConfirm: _ => {
+                // Llamar al servicio de eliminación
+                return fetch(`${API_BASE_URL}/user/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al eliminar el usuario.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        showMessage("Usuario eliminado con éxito ✅", "success");
+                        // Recargar la tabla
+                        loadDataTable();
+                    })
+                    .catch(error => {
+                        showMessage("Error al eliminar el usuario.", "error");
+                    });
+            }
+        }).then(function (result) { });
+    }
+});
+
+
 // Función para mostrar mensajes en pantalla
 function showMessage(message, type) {
     if (type === "success") {
@@ -56,7 +118,7 @@ async function loadDataTable() {
 
     try {
         // Primero traes la data
-        const response = await fetch(API_BASE_URL + '/user', {
+        const response = await fetch(API_BASE_URL + '/users', {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",
@@ -76,11 +138,20 @@ async function loadDataTable() {
                 { data: 'id' },
                 { data: 'name' },
                 { data: 'email' },
-                { data: 'role' },
-                { data: 'phone' }
+                { data: 'role_description' },
+                { data: 'phone' },
+                {
+                    className: 'text-center',
+                    render: function (data, type, row) {
+                        return `
+                            <button type="button" class="btn rounded-pill me-2 btn-primary edit-btn" data-id="${row.id}"><i class="icon-base ti tabler-pencil icon-22px"></i></button>
+                            <button type="button" class="btn rounded-pill me-2 btn-danger delete-btn" data-id="${row.id}"><i class="icon-base ti tabler-trash icon-22px"></i></button>
+                        `;
+                    }
+                }
             ],
             pageLength: 10,
-            layout: createDataTableLayout('createUserModal', 'Add User', [0, 1, 2])
+            layout: createDataTableLayout('createUserModal', 'Crear usuario', [0, 1, 2])
         });
 
         // Estilos aplicados solo cuando ya existe la tabla
@@ -147,7 +218,103 @@ async function registerUser(userData) {
     }
 }
 
+// Función para obtener datos de un usuario por ID y llenar el modal de edición
+async function getUserById(id) {
+    const token = localStorage.getItem("token");
 
+    try {
+        const response = await fetch(`${API_BASE_URL}/user/${id}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            showMessage("Error al cargar los datos del usuario.", "error");
+            return null;
+        }
+
+        const result = await response.json();
+        const user = result.data ?? result;
+        populateEditModal(user);
+        return user;
+
+    } catch (error) {
+        showMessage("Error de conexión con el servidor ❌", "error");
+        return null;
+    }
+}
+
+// Función para llenar el modal de edición con los datos del usuario
+async function populateEditModal(user) {
+    if (!user) return;
+    document.getElementById("editId").value = user.id || "";
+    document.getElementById("editName").value = user.name || "";
+    document.getElementById("editEmail").value = user.email || "";
+    document.getElementById("editRole").value = user.role || "";
+    document.getElementById("editPhone").value = user.phone || "";
+
+    const editUserModal = document.getElementById('editUserModal');
+    const modalInstance = new bootstrap.Modal(editUserModal);
+    modalInstance.show();
+}
+
+// Evento para el botón de guardar cambios en el modal de edición
+async function handleUserUpdate() {
+    const id = document.getElementById("editId").value.trim();
+    const name = document.getElementById("editName").value.trim();
+    const email = document.getElementById("editEmail").value.trim();
+    // const password = document.getElementById("editPassword").value.trim();
+    const role = document.getElementById("editRole").value.trim();
+    const phone = document.getElementById("editPhone").value.trim();
+
+    if (!id || !name || !email || !role) {
+        return showMessage("Por favor, completa todos los campos.", "error");
+    }
+
+    // if (password && password.length < 8) {
+    //     return showMessage("La contraseña debe tener al menos 8 caracteres.", "error");
+    // }
+
+    // Llamar al servicio
+    await updateUser(id, { name, email, role, phone });
+}
+
+// Función para consumir el servicio de actualización
+async function updateUser(id, userData) {
+    const token = localStorage.getItem("token");
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/user/${id}`, {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(userData)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            const errorMessage = result.message || "Error al actualizar el usuario.";
+            return showMessage(errorMessage, "error");
+        }
+
+        showMessage("Usuario actualizado con éxito ✅", "success");
+        // Cerrar el modal
+        const editUserModal = document.getElementById('editUserModal');
+        const modalInstance = bootstrap.Modal.getInstance(editUserModal);
+        modalInstance.hide();
+        // Recargar la tabla
+        loadDataTable();
+
+    } catch (error) {
+        showMessage("Error de conexión con el servidor ❌", "error");
+    }
+}
 
 // Iniciar funciones
 loadDataTable()

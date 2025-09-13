@@ -45,8 +45,8 @@ export function createDataTableLayout(modalId, buttonText, exportColumns = []) {
       features: [
         {
           search: {
-            placeholder: 'Search Permissions',
-            text: '_INPUT_',
+            placeholder: 'Buscar...',
+            text: '_INPUT_'
           }
         },
         {
@@ -54,7 +54,7 @@ export function createDataTableLayout(modalId, buttonText, exportColumns = []) {
             {
               extend: 'collection',
               className: 'btn btn-label-secondary dropdown-toggle me-4',
-              text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ti tabler-upload icon-xs"></i> <span class="d-inline-block">Export</span></span>',
+              text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ti tabler-upload icon-xs"></i> <span class="d-inline-block">Exportar</span></span>',
               buttons: [
                 {
                   extend: 'print',
@@ -120,6 +120,6 @@ export function createDataTableLayout(modalId, buttonText, exportColumns = []) {
           ]
         }
       ]
-    }
+    },
   };
 }

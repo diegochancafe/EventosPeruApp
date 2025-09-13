@@ -13,13 +13,33 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
-        $data = [
+        // $users = User::all();
+        // $data = [
+        //     'data' => $users,
+        //     'message' => 'Lista de usuarios obtenida con éxito',
+        //     'status' => 'success'
+        // ];
+        // return response()->json($data, 200);
+
+        // Obtener todos los usuarios y mapearlos para agregar la descripción del rol
+        $users = User::all()->map(function ($user) {
+            $roleDescriptions = [
+                'admin'    => 'Administrador',
+                'client'   => 'Cliente',
+                'provider' => 'Proveedor',
+            ];
+
+            // Agregamos un nuevo campo sin alterar la BD
+            $user->role_description = $roleDescriptions[$user->role] ?? 'Desconocido';
+
+            return $user;
+        });
+
+        return response()->json([
             'data' => $users,
             'message' => 'Lista de usuarios obtenida con éxito',
             'status' => 'success'
-        ];
-        return response()->json($data, 200);
+        ], 200);
     }
 
     // Login function
@@ -150,6 +170,102 @@ class UserController extends Controller
             // Other errors
             return response()->json([
                 'message' => 'Error al crear el usuario',
+                'status' => 'error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Show function to get a specific user
+    public function show($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            return response()->json([
+                'data' => $user,
+                'message' => 'Usuario obtenido con éxito',
+                'status' => 'success',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Usuario no encontrado',
+                'status' => 'error',
+                'error' => $e->getMessage(),
+            ], 404);
+        }
+    }
+
+    // Update function to update a specific user
+    public function update(Request $request, $id)
+    {
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
+                // 'password' => 'sometimes|required|string|min:8',
+                'role' => 'sometimes|required|string|in:admin,client,provider',
+                'phone' => 'sometimes|string|max:20',
+            ]);
+
+            // Find the user
+            $user = User::findOrFail($id);
+
+            // Update user fields if they are present in the request
+            if (isset($validatedData['name'])) {
+                $user->name = $validatedData['name'];
+            }
+            if (isset($validatedData['email'])) {
+                $user->email = $validatedData['email'];
+            }
+            // if (isset($validatedData['password'])) {
+            //     $user->password = Hash::make($validatedData['password']);
+            // }
+            if (isset($validatedData['role'])) {
+                $user->role = $validatedData['role'];
+            }
+            if (isset($validatedData['phone'])) {
+                $user->phone = $validatedData['phone'];
+            }
+
+            // Save the updated user
+            $user->save();
+
+            // Success response
+            return response()->json([
+                'data' => $user,
+                'message' => 'Usuario actualizado con éxito',
+                'status' => 'success',
+            ], 200);
+        } catch (ValidationException $e) {
+            // Error validation
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+                'status' => 'error',
+            ], 422);
+        } catch (\Exception $e) {
+            // Other errors
+            return response()->json([
+                'message' => 'Error al actualizar el usuario',
+                'status' => 'error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+            return response()->json([
+                'message' => 'Usuario eliminado con éxito',
+                'status' => 'success',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar el usuario',
                 'status' => 'error',
                 'error' => $e->getMessage(),
             ], 500);

@@ -23,6 +23,8 @@
 @yield('vendor-script')
 @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.scss', 'resources/assets/vendor/libs/@form-validation/form-validation.scss'])
 @vite(['resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss', 'resources/assets/vendor/libs/typeahead-js/typeahead.scss'])
+@vite(['resources/assets/vendor/libs/sweetalert2/sweetalert2.scss'])
+
 @yield('vendor-style')
 
 <!-- Page Styles -->
