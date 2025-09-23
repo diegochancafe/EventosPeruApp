@@ -199,37 +199,19 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            // Find the user
+            $user = User::findOrFail($id);
+
             // Validate the request data
             $validatedData = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
                 'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
-                // 'password' => 'sometimes|required|string|min:8',
                 'role' => 'sometimes|required|string|in:admin,client,provider',
                 'phone' => 'sometimes|string|max:20',
             ]);
 
-            // Find the user
-            $user = User::findOrFail($id);
-
-            // Update user fields if they are present in the request
-            if (isset($validatedData['name'])) {
-                $user->name = $validatedData['name'];
-            }
-            if (isset($validatedData['email'])) {
-                $user->email = $validatedData['email'];
-            }
-            // if (isset($validatedData['password'])) {
-            //     $user->password = Hash::make($validatedData['password']);
-            // }
-            if (isset($validatedData['role'])) {
-                $user->role = $validatedData['role'];
-            }
-            if (isset($validatedData['phone'])) {
-                $user->phone = $validatedData['phone'];
-            }
-
-            // Save the updated user
-            $user->save();
+            // Update the user
+            $user->update($validatedData);
 
             // Success response
             return response()->json([

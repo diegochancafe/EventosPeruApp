@@ -266,17 +266,12 @@ async function handleUserUpdate() {
     const id = document.getElementById("editId").value.trim();
     const name = document.getElementById("editName").value.trim();
     const email = document.getElementById("editEmail").value.trim();
-    // const password = document.getElementById("editPassword").value.trim();
     const role = document.getElementById("editRole").value.trim();
     const phone = document.getElementById("editPhone").value.trim();
 
     if (!id || !name || !email || !role) {
         return showMessage("Por favor, completa todos los campos.", "error");
     }
-
-    // if (password && password.length < 8) {
-    //     return showMessage("La contraseña debe tener al menos 8 caracteres.", "error");
-    // }
 
     // Llamar al servicio
     await updateUser(id, { name, email, role, phone });
@@ -303,13 +298,13 @@ async function updateUser(id, userData) {
             return showMessage(errorMessage, "error");
         }
 
-        showMessage("Usuario actualizado con éxito ✅", "success");
         // Cerrar el modal
         const editUserModal = document.getElementById('editUserModal');
         const modalInstance = bootstrap.Modal.getInstance(editUserModal);
         modalInstance.hide();
-        // Recargar la tabla
+
         loadDataTable();
+        showMessage("Usuario actualizado con éxito ✅", "success");
 
     } catch (error) {
         showMessage("Error de conexión con el servidor ❌", "error");
