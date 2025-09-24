@@ -18,6 +18,8 @@ class Service extends Model
         'category_id',
     ];
 
+    protected $hidden = ['user_id', 'category_id'];
+
     // Relationships
     public function user()
     {

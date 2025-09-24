@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\ServiceController;
 
 // Register & Login
 Route::post('/register', [UserController::class, 'register']); // register
@@ -25,5 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/{id}', [UserController::class, 'show']); // get user info
     Route::put('/user/{id}', [UserController::class, 'update']); // actualizar
     Route::delete('/user/{id}', [UserController::class, 'destroy']); // eliminar
+
+    // Service routes
+    Route::get('/services', [ServiceController::class, 'index']); // get services
 
 });
