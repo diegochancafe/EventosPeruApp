@@ -33,7 +33,9 @@ class Service extends Model
 
     public function events()
     {
-        return $this->hasMany(Event::class);
+        return $this->belongsToMany(Event::class, 'event_service')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 
     public function ratings()

@@ -9,7 +9,6 @@ return new class extends Migration {
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained('services')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('client_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('title', 200);
             $table->text('description')->nullable();

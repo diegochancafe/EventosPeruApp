@@ -83,7 +83,7 @@ document.addEventListener('click', (e) => {
                         return response.json();
                     })
                     .then(data => {
-                        showMessage("Usuario eliminado con éxito ✅", "success");
+                        showMessage("Servicio eliminado con éxito ✅", "success");
                         // Recargar la tabla
                         loadDataTable();
                     })

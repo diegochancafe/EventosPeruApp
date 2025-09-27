@@ -4,6 +4,7 @@ use App\Http\Controllers\api\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\ServiceController;
+use App\Http\Controllers\api\EventController;
 
 // Register & Login
 Route::post('/register', [UserController::class, 'register']); // register
@@ -33,4 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/services', [ServiceController::class, 'store']); // create service
     Route::put('/service/{id}', [ServiceController::class, 'update']); // update service
     Route::delete('/service/{id}', [ServiceController::class, 'destroy']); // delete service
+
+    // Event routes
+    Route::get('/events', [EventController::class, 'index']); // get events
+    Route::get('/event/{id}', [EventController::class, 'show']); // get event info
 });

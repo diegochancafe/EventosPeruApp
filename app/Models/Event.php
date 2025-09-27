@@ -10,7 +10,6 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'service_id',
         'client_id',
         'title',
         'description',
@@ -22,14 +21,16 @@ class Event extends Model
     ];
 
     // Relationships
-    public function service()
-    {
-        return $this->belongsTo(Service::class);
-    }
-
     public function client()
     {
         return $this->belongsTo(User::class, 'client_id');
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'event_service')
+            ->withPivot('status') // ejemplo: pendiente, confirmado, completado
+            ->withTimestamps();
     }
 
     public function ratings()
