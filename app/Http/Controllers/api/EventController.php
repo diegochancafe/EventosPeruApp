@@ -12,7 +12,7 @@ class EventController extends Controller
     public function index()
     {
         // Obtener todos los eventos con sus relaciones de usuario y categoría
-        $service = Event::with(['client', 'service'])->get();
+        $service = Event::with(['client', 'services'])->get();
 
         return response()->json([
             'data' => $service,
@@ -23,7 +23,7 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Event::with(['client', 'service'])->find($id);
+        $event = Event::with(['client', 'services'])->find($id);
 
         if (!$event) {
             return response()->json([
