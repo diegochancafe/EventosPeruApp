@@ -5,10 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -37,6 +34,7 @@ class CategoryController extends Controller
             $category = Category::create([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
+                'created_at'  => now(),
             ]);
 
             // Success response

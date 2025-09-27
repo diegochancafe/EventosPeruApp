@@ -1,7 +1,6 @@
 /**
  *  Pages Home
  */
-import { get } from 'jquery';
 import { createDataTableLayout, applyCustomClasses } from '../utils/datatable-utils.js';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css'; // for React, Vue and Svelte
@@ -51,6 +50,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Detectar clic en botón Eliminar
 document.addEventListener('click', (e) => {
     const deleteButton = e.target.closest('.delete-btn'); // busca si se hizo clic en un botón con esa clase
     if (deleteButton) {
@@ -215,16 +215,16 @@ async function getCategoryEdit(id) {
             }
         });
 
+        const result = await response.json();
+
         if (!response.ok) {
-            showMessage("Error al obtener los datos de la categoría.", "error");
+            const message = result.message || "Error al obtener los datos del servicio.";
+            showMessage(message, "error");
             return null;
         }
 
-        const result = await response.json();
-        const category = result.data ?? result;
-
         // Llenar el modal con los datos de la categoría
-        populateEditModal(category);
+        populateEditModal(result.data);
         return category;
 
     } catch (error) {
@@ -295,8 +295,6 @@ async function updateCategory(id, categoryData) {
         showMessage("Error de conexión con el servidor ❌", "error");
     }
 }
-
-
 
 // Iniciar funciones
 loadDataTable();
