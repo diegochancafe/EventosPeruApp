@@ -15,7 +15,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']); // logout
 
     // Category routes
-    Route::get('/category', [CategoryController::class, 'index']); // get categories
+    Route::get('/categories', [CategoryController::class, 'index']); // get categories
+    Route::get('/categories/services', [CategoryController::class, 'indexWithServices']); // get categories
     Route::get('/category/{id}', [CategoryController::class, 'show']); // get category info
     Route::post('/category', [CategoryController::class, 'store']); // create category
     Route::put('/category/{id}', [CategoryController::class, 'update']); // update category
@@ -38,4 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Event routes
     Route::get('/events', [EventController::class, 'index']); // get events
     Route::get('/event/{id}', [EventController::class, 'show']); // get event info
+    Route::post('/event', [EventController::class, 'store']); // create event
+    Route::put('/event/{id}', [EventController::class, 'update']); // update event
+    Route::delete('/event/{id}', [EventController::class, 'destroy']); // delete event
 });

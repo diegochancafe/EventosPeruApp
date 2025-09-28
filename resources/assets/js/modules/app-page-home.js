@@ -14,6 +14,7 @@ const API_BASE_URL = "http://localhost:8000/api";
 const loginButton = document.getElementById("loginButton");
 if (loginButton) {
     loginButton.addEventListener("click", (event) => {
+        console.log("Login button clicked"); // Debugging line
         event.preventDefault(); // Evita redirección si es <a>
         logoutUser();          // Llama tu función de login
     });

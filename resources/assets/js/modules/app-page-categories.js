@@ -113,7 +113,7 @@ async function loadDataTable() {
 
     try {
         // Primero traes la data
-        const response = await fetch(API_BASE_URL + '/category', {
+        const response = await fetch(API_BASE_URL + '/categories', {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",

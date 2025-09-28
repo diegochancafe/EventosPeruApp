@@ -20,6 +20,17 @@ class CategoryController extends Controller
         return response()->json($data, 200);
     }
 
+    public function indexWithServices()
+    {
+        $categories = Category::with('services')->get();
+        $data = [
+            'data' => $categories,
+            'message' => 'Lista de categorias obtenidas con éxito',
+            'status' => 'success'
+        ];
+        return response()->json($data, 200);
+    }
+
     // Store function
     public function store(Request $request)
     {
