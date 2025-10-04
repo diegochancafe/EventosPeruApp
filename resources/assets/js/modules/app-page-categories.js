@@ -83,7 +83,7 @@ document.addEventListener('click', (e) => {
                         return response.json();
                     })
                     .then(data => {
-                        showMessage("Categoría eliminada con éxito ✅", "success");
+                        showMessage("Categoría eliminada con éxito.", "success");
                         // Recargar la tabla
                         loadDataTable();
                     })
@@ -152,7 +152,7 @@ async function loadDataTable() {
 
     } catch (error) {
         console.log(error);
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -198,7 +198,7 @@ async function handleCategoryCreation() {
         loadDataTable();
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -228,7 +228,7 @@ async function getCategoryEdit(id) {
         return category;
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
         return null;
     }
 }
@@ -289,10 +289,10 @@ async function updateCategory(id, categoryData) {
         modalInstance.hide();
 
         loadDataTable();
-        showMessage("Categoría actualizada con éxito ✅", "success");
+        showMessage("Categoría actualizada con éxito.", "success");
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 

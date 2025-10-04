@@ -40,14 +40,14 @@ async function logoutUser() {
         const data = await response.json();
 
         if (response.ok) {
-            showMessage("Cierre de sesión exitoso ✅", "success");
+            showMessage("Cierre de sesión exitoso.", "success");
             localStorage.removeItem("token");
             window.location.replace(baseUrl + "auth/login");
         } else {
-            showMessage("Error: " + (data.message || "No se pudo cerrar sesión ❌"), "error");
+            showMessage("Error: " + (data.message || "No se pudo cerrar sesión."), "error");
         }
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 

@@ -87,7 +87,7 @@ document.addEventListener('click', (e) => {
                         return response.json();
                     })
                     .then(data => {
-                        showMessage("Usuario eliminado con éxito ✅", "success");
+                        showMessage("Usuario eliminado con éxito.", "success");
                         // Recargar la tabla
                         loadDataTable();
                     })
@@ -158,7 +158,7 @@ async function loadDataTable() {
         applyCustomClasses();
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -205,7 +205,7 @@ async function registerUser(userData) {
             return showMessage(errorMessage, "error");
         }
 
-        showMessage("Usuario creado con éxito ✅", "success");
+        showMessage("Usuario creado con éxito.", "success");
         // Cerrar el modal
         const createUserModal = document.getElementById('createUserModal');
         const modalInstance = bootstrap.Modal.getInstance(createUserModal);
@@ -214,7 +214,7 @@ async function registerUser(userData) {
         loadDataTable();
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -242,7 +242,7 @@ async function getUserById(id) {
         return user;
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
         return null;
     }
 }
@@ -304,10 +304,10 @@ async function updateUser(id, userData) {
         modalInstance.hide();
 
         loadDataTable();
-        showMessage("Usuario actualizado con éxito ✅", "success");
+        showMessage("Usuario actualizado con éxito.", "success");
 
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 

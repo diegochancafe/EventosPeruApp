@@ -16,12 +16,190 @@ $("#createServiceSelect").select2({
     placeholder: "Selecciona tus servicios...",
     allowClear: true
 });
+
+$("#editServiceSelect").select2({
+    dropdownParent: $('#editEventModal'),
+    placeholder: "Selecciona tus servicios...",
+    allowClear: true
+});
+
 // -- EVENTS
 const createButton = document.getElementById("createButton");
 if (createButton) {
     createButton.addEventListener("click", (event) => {
         handleEventCreation();
     });
+}
+
+const editButton = document.getElementById("editButton");
+if (editButton) {
+    editButton.addEventListener("click", (event) => {
+        handleEventUpdate();
+    });
+}
+
+// Detectar clic en botón Editar
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edit-btn'); // busca si se hizo clic en un botón con esa clase
+    if (btn) {
+        const id = btn.getAttribute('data-id'); // recupera el atributo
+        getEventEdit(id);
+    }
+});
+
+// Detectar clic en botón Eliminar
+document.addEventListener('click', (e) => {
+    const deleteButton = e.target.closest('.delete-btn'); // busca si se hizo clic en un botón con esa clase
+    if (deleteButton) {
+        const id = deleteButton.getAttribute('data-id'); // recupera el atributo
+        // Lógica para eliminar usuario
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¡No podrás revertir esto!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Si, eliminar!',
+            customClass: {
+                confirmButton: 'btn btn-primary me-2 waves-effect waves-light',
+                cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+            },
+            buttonsStyling: false,
+            preConfirm: _ => {
+                // Llamar al servicio de eliminación
+                return fetch(`${API_BASE_URL}/event/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al eliminar el evento.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        showMessage("Evento eliminado con éxito.", "success");
+                        // Recargar la tabla
+                        loadDataTable();
+                    })
+                    .catch(error => {
+                        showMessage("Error al eliminar la categoría.", "error");
+                    });
+            }
+        }).then(function (result) { });
+    }
+});
+
+async function getEventEdit(id) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await fetch(`${API_BASE_URL}/event/${id}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            const message = result.message || "Error al obtener los datos del servicio.";
+            showMessage(message, "error");
+            return null;
+        }
+
+        populateEditModal(result.data);
+        return null;
+    } catch (error) {
+        showMessage("Error de conexión con el servidor.", "error");
+        return null;
+    }
+}
+
+async function populateEditModal(data) {
+    if (!data) return;
+    document.getElementById("editId").value = data.id;
+    document.getElementById("editTitle").value = data.title;
+    document.getElementById("editDescription").value = data.description;
+    document.getElementById("editEventDate").value = data.event_date;
+    document.getElementById("editStartTime").value = data.start_time;
+    document.getElementById("editEndTime").value = data.end_time;
+    document.getElementById("editEventAddress").value = data.event_address;
+    const editServiceSelect = document.getElementById("editServiceSelect");
+    if (editServiceSelect) {
+        // Limpia las opciones seleccionadas previamente
+        $(editServiceSelect).val(null).trigger('change');
+        // Selecciona las nuevas opciones basadas en los servicios del evento
+        const serviceIds = data.services.map(service => service.id);
+        $(editServiceSelect).val(serviceIds).trigger('change');
+    }
+    const editStatus = document.getElementById("editStatus");
+    if (editStatus) {
+        editStatus.value = data.status;
+    }
+    const editEventModal = document.getElementById('editEventModal');
+    const modalInstance = new bootstrap.Modal(editEventModal);
+    modalInstance.show();
+}
+
+async function handleEventUpdate() {
+    const editId = document.getElementById("editId");
+    const editTitle = document.getElementById("editTitle");
+    const editDescription = document.getElementById("editDescription");
+    const editEventDate = document.getElementById("editEventDate");
+    const editStartTime = document.getElementById("editStartTime");
+    const editEndTime = document.getElementById("editEndTime");
+    const editEventAddress = document.getElementById("editEventAddress");
+    const editServiceSelect = document.getElementById("editServiceSelect");
+    const editStatus = document.getElementById("editStatus");
+    if (!editId || !editTitle || !editDescription || !editEventDate || !editStartTime || !editEndTime || !editEventAddress || !editServiceSelect || !editStatus) {
+        return showMessage("Formulario incompleto.", "error");
+    }
+    const eventData = {
+        title: editTitle.value,
+        description: editDescription.value,
+        event_date: editEventDate.value,
+        start_time: editStartTime.value,
+        end_time: editEndTime.value,
+        event_address: editEventAddress.value,
+        services: Array.from(editServiceSelect.selectedOptions).map(option => option.value),
+        status: editStatus.value
+    };
+    updateEvent(editId.value, eventData);
+}
+
+async function updateEvent(id, eventData) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await fetch(`${API_BASE_URL}/event/${id}`, {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(eventData)
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            const message = result.message || "Error al actualizar el evento.";
+            return showMessage(message, "error");
+        }
+        // Éxito
+        showMessage("Evento actualizado con éxito.", "success");
+        // Cerrar el modal
+        const editModal = document.getElementById('editEventModal');
+        const modal = bootstrap.Modal.getInstance(editModal);
+        modal.hide();
+        // Recargar la tabla
+        loadDataTable();
+    } catch (error) {
+        console.error('Error updating event:', error);
+        showMessage("Error de conexión con el servidor.", "error");
+        return;
+    }
 }
 
 // Función para cargar y mostrar la tabla de usuarios
@@ -57,7 +235,7 @@ async function loadDataTable() {
                 // { data: 'start_time' },
                 // { data: 'end_time' },
                 { data: 'event_address' },
-                { data: 'status' },
+                { data: 'status_description' },
                 {
                     className: 'text-center',
                     render: function (data, type, row) {
@@ -77,7 +255,7 @@ async function loadDataTable() {
 
     } catch (error) {
         console.log(error);
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -85,6 +263,7 @@ async function loadDataTable() {
 // Función para cargar las categorías en el select del modal
 async function getCategoriesServices() {
     const createServiceSelect = document.getElementById('createServiceSelect');
+    const editServiceSelect = document.getElementById('editServiceSelect');
     const token = localStorage.getItem("token");
     if (!createServiceSelect) return;
 
@@ -106,18 +285,28 @@ async function getCategoriesServices() {
 
         // Recorrer categorías
         result.data.forEach(category => {
-            const optgroup = document.createElement("optgroup");
-            optgroup.label = category.name;
+            const optgroup1 = document.createElement("optgroup");
+            optgroup1.label = category.name;
+
+            const optgroup2 = document.createElement("optgroup");
+            optgroup2.label = category.name;
 
             // Recorrer servicios dentro de cada categoría
             category.services.forEach(service => {
-                const option = document.createElement("option");
-                option.value = service.id;
-                option.textContent = `${service.title} - S/${service.price}`;
-                optgroup.appendChild(option);
+                const option1 = document.createElement("option");
+                option1.value = service.id;
+                option1.textContent = `${service.title} - S/${service.price}`;
+
+                const option2 = document.createElement("option");
+                option2.value = service.id;
+                option2.textContent = `${service.title} - S/${service.price}`;
+
+                optgroup1.appendChild(option1);
+                optgroup2.appendChild(option2);
             });
 
-            createServiceSelect.appendChild(optgroup);
+            createServiceSelect.appendChild(optgroup1);
+            editServiceSelect.appendChild(optgroup2);
         });
 
         // Si usas Select2, refrescarlo
@@ -125,9 +314,14 @@ async function getCategoriesServices() {
             $(createServiceSelect).trigger('change');
         }
 
+        // Si usas Select2, refrescarlo
+        if ($(editServiceSelect).data('select2')) {
+            $(editServiceSelect).trigger('change');
+        }
+
     } catch (error) {
         console.error('Error fetching categories:', error);
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -185,7 +379,7 @@ async function handleEventCreation() {
 
     } catch (error) {
         console.error('Error creating event:', error);
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 
 }

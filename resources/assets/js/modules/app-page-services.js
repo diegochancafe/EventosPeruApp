@@ -83,7 +83,7 @@ document.addEventListener('click', (e) => {
                         return response.json();
                     })
                     .then(data => {
-                        showMessage("Servicio eliminado con éxito ✅", "success");
+                        showMessage("Servicio eliminado con éxito.", "success");
                         // Recargar la tabla
                         loadDataTable();
                     })
@@ -147,7 +147,7 @@ async function loadDataTable() {
 
     } catch (error) {
         console.error('Error fetching services:', error);
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -160,7 +160,7 @@ async function getCategories() {
 
     try {
         // Primero traes la data
-        const response = await fetch(API_BASE_URL + '/category', {
+        const response = await fetch(API_BASE_URL + '/categories', {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",
@@ -176,16 +176,30 @@ async function getCategories() {
         createCategorySelect.innerHTML = '<option value="" disabled selected>Seleccionar</option>';
         // Agregar nuevas opciones
         result.data.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category.id;
-            option.textContent = category.name;
-            createCategorySelect.appendChild(option);
-            editCategorySelect.appendChild(option);
+            const option1 = document.createElement('option');
+            option1.value = category.id;
+            option1.textContent = category.name;
+
+            const option2 = document.createElement('option');
+            option2.value = category.id;
+            option2.textContent = category.name;
+
+            createCategorySelect.appendChild(option1);
+            editCategorySelect.appendChild(option2);
         });
 
+        // Si usas Select2, refrescarlo
+        if ($(createCategorySelect).data('select2')) {
+            $(createCategorySelect).trigger('change');
+        }
+
+        // Si usas Select2, refrescarlo
+        if ($(editCategorySelect).data('select2')) {
+            $(editCategorySelect).trigger('change');
+        }
     } catch (error) {
         console.error('Error fetching categories:', error);
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -224,7 +238,7 @@ async function handleServiceCreation() {
             return showMessage(message, "error");
         }
         // Éxito
-        showMessage("Servicio creado con éxito ✅", "success");
+        showMessage("Servicio creado con éxito.", "success");
         // Cerrar el modal
         const createModal = document.getElementById('createServiceModal');
         const modal = bootstrap.Modal.getInstance(createModal);
@@ -233,7 +247,7 @@ async function handleServiceCreation() {
         // Recargar la tabla
         loadDataTable();
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -259,7 +273,7 @@ async function getServiceEdit(id) {
         populateEditModal(result.data);
         return null;
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
         return null;
     }
 }
@@ -313,7 +327,7 @@ async function updateService(id, serviceData) {
             return showMessage(message, "error");
         }
         // Éxito
-        showMessage("Servicio actualizado con éxito ✅", "success");
+        showMessage("Servicio actualizado con éxito.", "success");
         // Cerrar el modal
         const editModal = document.getElementById('editServiceModal');
         const modal = bootstrap.Modal.getInstance(editModal);
@@ -321,7 +335,7 @@ async function updateService(id, serviceData) {
         // Recargar la tabla
         loadDataTable();
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 

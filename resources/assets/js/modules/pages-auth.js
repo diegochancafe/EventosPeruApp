@@ -83,13 +83,13 @@ async function loginUser(userData) {
 
         if (response.ok) {
             localStorage.setItem("token", data.token); // Save token
-            showMessage("Inicio de sesión exitoso ✅", "success");
+            showMessage("Inicio de sesión exitoso.", "success");
             window.location.replace(baseUrl);
         } else {
-            showMessage("Error: " + (data.message || "Credenciales incorrectas ❌"), "error");
+            showMessage("Error: " + (data.message || "Credenciales incorrectas."), "error");
         }
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
@@ -105,13 +105,13 @@ async function registerUser(userData) {
         const data = await response.json();
 
         if (response.ok) {
-            showMessage("Usuario creado con éxito ✅", "success");
+            showMessage("Usuario creado con éxitoñ", "success");
             window.location.replace(baseUrl + 'auth/login');
         } else {
-            showMessage("Error: " + (data.message || "No se pudo registrar"), "error");
+            showMessage("Error: " + (data.message || "No se pudo registrar."), "error");
         }
     } catch (error) {
-        showMessage("Error de conexión con el servidor ❌", "error");
+        showMessage("Error de conexión con el servidor.", "error");
     }
 }
 
