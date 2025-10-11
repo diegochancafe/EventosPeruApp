@@ -125,11 +125,33 @@ async function loadDataTable() {
                 "Authorization": `Bearer ${token}`
             }
         });
-
+        if (response.status === 403) { // No autorizado
+            $("#content-not-authorized").css("display", "block");
+            $("#content-authorized").css("display", "none");
+            return;
+        }
         if (!response.ok) { return showMessage("Error al cargar los datos de usuarios.", "error"); }
 
         const result = await response.json();
-
+        // --
+        let totalCountUsers = 0;
+        totalCountUsers = result.data ? result.data.length : result.length;
+        console.log("Total usuarios:", totalCountUsers);
+        var totalUsersClient = 0;
+        var totalUsersAdmin = 0;
+        var totalUsersProvider = 0;
+        result.data.forEach(user => {
+            if (user.role === 'client') totalUsersClient++;
+            if (user.role === 'admin') totalUsersAdmin++;
+            if (user.role === 'provider') totalUsersProvider++;
+        });
+        document.getElementById("totalCountUsers").innerText = totalCountUsers;
+        document.getElementById("totalUsersClient").innerText = totalUsersClient;
+        document.getElementById("totalUsersAdmin").innerText = totalUsersAdmin;
+        document.getElementById("totalUsersProvider").innerText = totalUsersProvider;
+        // Mostrar contenido autorizado y ocultar no autorizado
+        $("#content-not-authorized").css("display", "none");
+        $("#content-authorized").css("display", "block");
         // Ahora sí inicializas el DataTable con la data
         new DataTable(dataTableUsers, {
             destroy: true, // Destruye cualquier instancia previa

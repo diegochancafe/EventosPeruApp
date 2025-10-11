@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Service routes
     Route::get('/services', [ServiceController::class, 'index']); // get services
+    Route::get('/services/all', [ServiceController::class, 'listForEvents']); // get services
     Route::get('/service/{id}', [ServiceController::class, 'show']); // get service info
     Route::post('/services', [ServiceController::class, 'store']); // create service
     Route::put('/service/{id}', [ServiceController::class, 'update']); // update service

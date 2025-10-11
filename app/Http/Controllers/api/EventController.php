@@ -10,22 +10,32 @@ use Illuminate\Validation\ValidationException;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Obtener todos los eventos con sus relaciones de usuario y categoría
-        $events = Event::with(['client', 'services'])
-            ->get()
-            ->map(function ($event) {
-                $statusDescriptions = [
-                    'pending'   => 'Pendiente',
-                    'confirmed' => 'Confirmado',
-                    'completed' => 'Completado',
-                    'canceled'  => 'Cancelado',
-                ];
+        // Obtain the authenticated user
+        $user = $request->user();
 
-                $event->status_description = $statusDescriptions[$event->status] ?? 'Desconocido';
-                return $event;
-            });
+        // Base query
+        $query = Event::with(['client', 'services']);
+
+        // Filtrar según el rol
+        if ($user->role !== 'admin') {
+            // Provider o Client: solo sus eventos
+            $query->where('client_id', $user->id);
+        }
+
+        // Obtener eventos y mapear estado en texto
+        $events = $query->get()->map(function ($event) {
+            $statusDescriptions = [
+                'pending'   => 'Pendiente',
+                'confirmed' => 'Confirmado',
+                'finished'  => 'Completado',
+                'canceled'  => 'Cancelado',
+            ];
+
+            $event->status_description = $statusDescriptions[$event->status] ?? 'Desconocido';
+            return $event;
+        });
 
         return response()->json([
             'data' => $events,

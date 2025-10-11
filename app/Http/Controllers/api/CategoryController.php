@@ -9,11 +9,32 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        // Usuario autenticado
+        $user = $request->user();
+        // Si el cliente intenta acceder, no se le permite
+        if ($user->role === 'client') {
+            return response()->json([
+                'data' => [],
+                'message' => 'Los clientes no pueden ver los servicios',
+                'status' => 'error'
+            ], 403);
+        }
+
+        // Construir la consulta base
+        $query = Category::query();
+
+        // Si es provider, filtrar por su propio ID
+        if ($user->role === 'provider') {
+            $query->where('user_id', $user->id);
+        }
+        // Obtener los servicios
+        $services = $query->get();
+
+        // Obtener todos las categorias
         $data = [
-            'data' => $categories,
+            'data' => $services,
             'message' => 'Lista de categorias obtenidas con éxito',
             'status' => 'success'
         ];
@@ -41,11 +62,14 @@ class CategoryController extends Controller
                 'description' => 'nullable|string',
             ]);
 
+            $user = $request->user();
+
             // Create the category
             $category = Category::create([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
                 'created_at'  => now(),
+                'user_id' => $user->id,
             ]);
 
             // Success response
@@ -103,8 +127,12 @@ class CategoryController extends Controller
                 'description' => 'nullable|string',
             ]);
 
-            // Update the category
-            $category->update($validatedData);
+            // Updated the category
+            $category = Category::update([
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+                'updated_at'  => now()
+            ]);
 
             // Success response
             return response()->json([

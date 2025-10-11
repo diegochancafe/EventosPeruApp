@@ -9,7 +9,41 @@ use Illuminate\Validation\ValidationException;
 
 class ServiceController extends Controller
 {
-    public function index()
+    // List all services (auth required)
+    public function index(Request $request)
+    {
+        // Usuario autenticado
+        $user = $request->user();
+
+        // Si el cliente intenta acceder, no se le permite
+        if ($user->role === 'client') {
+            return response()->json([
+                'data' => [],
+                'message' => 'Los clientes no pueden ver los servicios',
+                'status' => 'error'
+            ], 403);
+        }
+
+        // Construir la consulta base
+        $query = Service::with(['user', 'category']);
+
+        // Si es provider, filtrar por su propio ID
+        if ($user->role === 'provider') {
+            $query->where('user_id', $user->id);
+        }
+
+        // Obtener los servicios
+        $services = $query->get();
+
+        return response()->json([
+            'data' => $services,
+            'message' => 'Lista de servicios obtenida con éxito',
+            'status' => 'success'
+        ], 200);
+    }
+
+    // List all services for an event (no auth required)
+    public function listForEvent()
     {
         // Obtener todos los servicios con sus relaciones de usuario y categoría
         $service = Service::with(['user', 'category'])->get();

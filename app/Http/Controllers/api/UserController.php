@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // $users = User::all();
         // $data = [
@@ -20,7 +20,14 @@ class UserController extends Controller
         //     'status' => 'success'
         // ];
         // return response()->json($data, 200);
-
+        // User authenticated
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'message' => 'No autorizado',
+                'status' => 'error'
+            ], 403);
+        }
         // Obtener todos los usuarios y mapearlos para agregar la descripción del rol
         $users = User::all()->map(function ($user) {
             $roleDescriptions = [
@@ -68,8 +75,6 @@ class UserController extends Controller
                 'token' => $token,
                 'status' => 'success',
                 'message' => 'Login exitoso',
-
-
             ], 200);
         } catch (\Exception $e) {
             // Other errors

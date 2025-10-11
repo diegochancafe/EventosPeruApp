@@ -112,10 +112,17 @@ async function loadDataTable() {
             }
         });
 
+        if (response.status === 403) { // No autorizado
+            $("#content-not-authorized").css("display", "block");
+            $("#content-authorized").css("display", "none");
+            return;
+        }
         if (!response.ok) { return showMessage("Error al cargar los datos de los servicios.", "error"); }
 
         const result = await response.json();
-
+        // Mostrar contenido autorizado y ocultar no autorizado
+        $("#content-not-authorized").css("display", "none");
+        $("#content-authorized").css("display", "block");
         // Ahora sí inicializas el DataTable con la data
         new DataTable(dataTableServices, {
             destroy: true, // Destruye cualquier instancia previa
@@ -167,7 +174,9 @@ async function getCategories() {
                 "Authorization": `Bearer ${token}`
             }
         });
-
+        if (response.status === 403) { // No autorizado
+            return;
+        }
         if (!response.ok) { return showMessage("Error al cargar las categorías.", "error"); }
 
         const result = await response.json();
