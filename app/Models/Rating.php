@@ -12,7 +12,6 @@ class Rating extends Model
     protected $fillable = [
         'event_id',
         'client_id',
-        'provider_id',
         'score',
         'comment',
     ];
@@ -26,10 +25,5 @@ class Rating extends Model
     public function client()
     {
         return $this->belongsTo(User::class, 'client_id');
-    }
-
-    public function provider()
-    {
-        return $this->belongsTo(User::class, 'provider_id');
     }
 }

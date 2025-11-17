@@ -8,8 +8,10 @@ use App\Http\Controllers\pages\MiscError;
 use App\Http\Controllers\authentications\LoginBasic;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\pages\EventsPage;
+use App\Http\Controllers\pages\RatingsPage;
 use App\Http\Controllers\pages\ServicesPage;
 use App\Http\Controllers\pages\UsersPage;
+use App\Models\Rating;
 
 // Main Page Routes (accessible via JS after token login)
 Route::get('/', [HomePage::class, 'index'])->name('pages-home');
@@ -17,6 +19,7 @@ Route::get('/page-services', [ServicesPage::class, 'index'])->name('pages-servic
 Route::get('/page-events', [EventsPage::class, 'index'])->name('pages-events');
 Route::get('/page-categories', [CategoriesPage::class, 'index'])->name('pages-categories');
 Route::get('/page-users', [UsersPage::class, 'index'])->name('pages-users');
+Route::get('/page-ratings', [RatingsPage::class, 'index'])->name('pages-ratings');
 
 
 // Authentication pages (register/login views)

@@ -128,7 +128,7 @@ class CategoryController extends Controller
             ]);
 
             // Updated the category
-            $category = Category::update([
+            $category->update([
                 'name' => $validatedData['name'],
                 'description' => $validatedData['description'],
                 'updated_at'  => now()

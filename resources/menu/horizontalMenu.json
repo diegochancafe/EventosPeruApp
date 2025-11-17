@@ -7,6 +7,12 @@
       "slug": "pages-home"
     },
     {
+      "url": "/page-ratings",
+      "icon": "menu-icon icon-base ti tabler-star",
+      "name": "Ratings",
+      "slug": "pages-ratings"
+    },
+    {
       "url": "/page-services",
       "icon": "menu-icon icon-base ti tabler-shopping-cart",
       "name": "Servicios",

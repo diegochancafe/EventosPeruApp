@@ -123,7 +123,7 @@ class UserController extends Controller
         } catch (ValidationException $e) {
             // Error validation
             return response()->json([
-                // 'message' => 'Error de validación',
+                // 'message' => 'Error de validación', Laravel Lan
                 'message' => $e->getMessage(),
                 'errors' => $e->errors(),
                 'status' => 'error',

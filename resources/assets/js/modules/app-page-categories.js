@@ -232,9 +232,10 @@ async function getCategoryEdit(id) {
 
         // Llenar el modal con los datos de la categoría
         populateEditModal(result.data);
-        return category;
+        return null;
 
     } catch (error) {
+        console.log(error);
         showMessage("Error de conexión con el servidor.", "error");
         return null;
     }

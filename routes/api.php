@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\ServiceController;
 use App\Http\Controllers\api\EventController;
+use App\Http\Controllers\api\HomeController;
+use App\Http\Controllers\api\RatingController;
 
 // Register & Login
 Route::post('/register', [UserController::class, 'register']); // register
@@ -14,10 +16,21 @@ Route::post('/login', [UserController::class, 'login']); // login
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']); // logout
 
+    // Home routes
+    Route::get('/home/services-usage', [HomeController::class, 'getServicesUsage']); // get services usage statistics
+    Route::get('/home/events-total-by-status', [HomeController::class, 'getEventsTotalByStatus']); // get events total by status statistics
+
+    // Rating routes
+    Route::get('/ratings', [RatingController::class, 'index']);
+    Route::get('/rating/{id}', [RatingController::class, 'show']);
+    Route::post('/rating', [RatingController::class, 'store']);
+    Route::put('/rating/{id}', [RatingController::class, 'update']);
+    Route::delete('/rating/{id}', [RatingController::class, 'destroy']);
+
     // Category routes
     Route::get('/categories', [CategoryController::class, 'index']); // get categories
     Route::get('/categories/services', [CategoryController::class, 'indexWithServices']); // get categories
-    Route::get('/category/{id}', [CategoryController::class, 'show']); // get category info
+    Route::get('/category/{id}', [CategoryController::class, 'show']); // get category info 
     Route::post('/category', [CategoryController::class, 'store']); // create category
     Route::put('/category/{id}', [CategoryController::class, 'update']); // update category
     Route::delete('/category/{id}', [CategoryController::class, 'destroy']); //
@@ -43,4 +56,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/event', [EventController::class, 'store']); // create event
     Route::put('/event/{id}', [EventController::class, 'update']); // update event
     Route::delete('/event/{id}', [EventController::class, 'destroy']); // delete event
+    Route::get('/events/{id}/pdf', [EventController::class, 'downloadPdf']); // download event PDF
 });

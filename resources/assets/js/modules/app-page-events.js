@@ -47,6 +47,43 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// EVENTO: Descargar PDF
+document.addEventListener('click', async function (e) {
+    if (e.target.closest('.download-pdf-btn')) {
+
+        const id = e.target.closest('.download-pdf-btn').dataset.id;
+        const token = localStorage.getItem("token");
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/events/${id}/pdf`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                return showMessage("No se pudo descargar el PDF.", "error");
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `evento_${id}.pdf`; // 👈 Forzar nombre
+            a.click();
+
+            // limpiar
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error(error);
+            showMessage("Error al descargar el PDF.", "error");
+        }
+    }
+});
+
+
 // Detectar clic en botón Eliminar
 document.addEventListener('click', (e) => {
     const deleteButton = e.target.closest('.delete-btn'); // busca si se hizo clic en un botón con esa clase
@@ -242,7 +279,10 @@ async function loadDataTable() {
                         return `
                             <button type="button" class="btn rounded-pill me-2 btn-primary edit-btn" data-id="${row.id}"><i class="icon-base ti tabler-pencil icon-22px"></i></button>
                             <button type="button" class="btn rounded-pill me-2 btn-danger delete-btn" data-id="${row.id}"><i class="icon-base ti tabler-trash icon-22px"></i></button>
-                        `;
+                         <button type="button" class="btn rounded-pill btn-info download-pdf-btn" data-id="${row.id}">
+                <i class="icon-base ti tabler-download icon-22px"></i>
+            </button>
+                            `;
                     }
                 }
             ],

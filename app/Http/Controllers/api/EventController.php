@@ -7,6 +7,9 @@ use App\Models\Event;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf; // PDF
+use Illuminate\Support\Facades\Mail; // Email
+use App\Mail\EventPdfMail; // Mailable
 
 class EventController extends Controller
 {
@@ -95,6 +98,17 @@ class EventController extends Controller
                 $event->services()->attach($validatedData['services']);
             }
 
+            // Adjuntar los servicios
+            if (!empty($validatedData['services'])) {
+                $event->services()->attach($validatedData['services']);
+            }
+
+            // *** GENERAR PDF ***
+            $pdf = PDF::loadView('pdf.event', compact('event'))->output();
+
+            // *** ENVIAR CORREO ***
+            Mail::to($event->client->email)->send(new EventPdfMail($event, $pdf));
+
             // Respuesta de éxito
             return response()->json([
                 'data' => $event,
@@ -116,6 +130,24 @@ class EventController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function downloadPdf($id)
+    {
+        $event = Event::with(['client', 'services'])->findOrFail($id);
+
+        $pdf = PDF::loadView('pdf.event', compact('event'));
+
+        // // 1. Generar el PDF
+        // $pdf = PDF::loadView('pdf.event', compact('event'));
+        // $pdfContent = $pdf->output();
+
+        // // 2. Enviar el correo con el PDF adjunto
+        // Mail::to("chancaferonaldo78@gmail.com")->send(
+        //     new EventPdfMail($event, $pdfContent)
+        // );
+
+        return $pdf->download("evento_{$event->id}.pdf");
     }
 
     public function update(Request $request, $id)

@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('event_id')->constrained('events')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('client_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('provider_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->tinyInteger('score')->check('score >= 1 and score <= 5');
             $table->text('comment')->nullable();
             $table->timestamps();

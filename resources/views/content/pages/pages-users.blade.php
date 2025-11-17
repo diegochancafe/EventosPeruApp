@@ -47,7 +47,7 @@
                   <h4 id="totalUsersAdmin" class="mb-0 me-2">0</h4>
                   {{-- <p class="text-success mb-0">(+95%)</p> --}}
                 </div>
-                <small class="mb-0">total administradores </small>
+                <small class="mb-0">Total administradores </small>
               </div>
               <div class="avatar">
                 <span class="avatar-initial rounded bg-label-success">

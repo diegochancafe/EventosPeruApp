@@ -55,6 +55,7 @@ class ServiceController extends Controller
         ], 200);
     }
 
+    // Show a specific service by ID
     public function show($id)
     {
         try {
@@ -120,6 +121,7 @@ class ServiceController extends Controller
         }
     }
 
+    // Update an existing service
     public function update(Request $request, $id)
     {
         try {
