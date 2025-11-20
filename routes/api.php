@@ -7,6 +7,7 @@ use App\Http\Controllers\api\ServiceController;
 use App\Http\Controllers\api\EventController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\RatingController;
+use App\Http\Controllers\api\EventCalendarController;
 
 // Register & Login
 Route::post('/register', [UserController::class, 'register']); // register
@@ -19,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Home routes
     Route::get('/home/services-usage', [HomeController::class, 'getServicesUsage']); // get services usage statistics
     Route::get('/home/events-total-by-status', [HomeController::class, 'getEventsTotalByStatus']); // get events total by status statistics
+    Route::get('/events-calendar', [EventCalendarController::class, 'index']); // get events for FullCalendar
 
     // Rating routes
     Route::get('/ratings', [RatingController::class, 'index']);
@@ -57,4 +59,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/event/{id}', [EventController::class, 'update']); // update event
     Route::delete('/event/{id}', [EventController::class, 'destroy']); // delete event
     Route::get('/events/{id}/pdf', [EventController::class, 'downloadPdf']); // download event PDF
+
+    
 });
+
+
+

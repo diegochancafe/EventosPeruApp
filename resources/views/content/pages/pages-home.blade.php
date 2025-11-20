@@ -64,6 +64,11 @@
 
   </div>
 
+  {{-- Event Calendar card --}}
+  <div class="row mt-3">
+    @include('components.event-calendar')
+  </div>
+
   <style>
     .events-progress-label {
       text-align: center;

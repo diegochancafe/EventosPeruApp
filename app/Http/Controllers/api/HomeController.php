@@ -24,6 +24,7 @@ class HomeController extends Controller
 
         $query = Service::select('id', 'title') // <-- agrega title
             ->withCount('events')
+            ->has('events')
             ->orderByDesc('events_count');
 
         if ($user->role === 'provider') {

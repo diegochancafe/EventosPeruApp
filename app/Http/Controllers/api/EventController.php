@@ -93,21 +93,24 @@ class EventController extends Controller
                 'created_at'  => now(),
             ]);
 
-            // Asociar servicios al evento si se proporcionan
+            // Asociar servicios al evento si se proporcionan (attach una sola vez)
             if (!empty($validatedData['services'])) {
                 $event->services()->attach($validatedData['services']);
             }
 
-            // Adjuntar los servicios
-            if (!empty($validatedData['services'])) {
-                $event->services()->attach($validatedData['services']);
+            // Generar PDF y enviar correo en un bloque separado para no romper la creación
+            try {
+                $pdf = PDF::loadView('pdf.event', compact('event'))->output();
+
+                // Use the authenticated user's email (safer than relying on relation load)
+                $userEmail = $user->email ?? ($event->client->email ?? null);
+                if ($userEmail) {
+                    Mail::to($userEmail)->send(new EventPdfMail($event, $pdf));
+                }
+            } catch (\Exception $e) {
+                // Log the PDF/mail error but don't fail the request
+                logger()->error('PDF/Mail error while creating event: ' . $e->getMessage());
             }
-
-            // *** GENERAR PDF ***
-            $pdf = PDF::loadView('pdf.event', compact('event'))->output();
-
-            // *** ENVIAR CORREO ***
-            Mail::to($event->client->email)->send(new EventPdfMail($event, $pdf));
 
             // Respuesta de éxito
             return response()->json([
