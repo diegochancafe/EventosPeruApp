@@ -128,14 +128,14 @@
           <div class="row">
             <div class="col mb-4">
               <label class="form-label">Nombre</label>
-              <input type="text" id="editTitle" class="form-control" placeholder="Lorem ipsum">
+              <input type="text" id="editTitle" class="form-control" placeholder="Nombre del evento">
             </div>
           </div>
 
           <div class="row">
             <div class="col mb-4">
               <label class="form-label">Descripción</label>
-              <input type="text" id="editDescription" class="form-control" placeholder="Lorem ipsum dolor sit amet...">
+              <input type="text" id="editDescription" class="form-control" placeholder="Detalle una descripción...">
             </div>
           </div>
 
@@ -161,7 +161,7 @@
           <div class="row">
             <div class="col mb-4">
               <label class="form-label">Dirección</label>
-              <input type="text" id="editEventAddress" class="form-control" placeholder="Lorem ipsum">
+              <input type="text" id="editEventAddress" class="form-control" placeholder="Ingresa la dirección del evento">
             </div>
           </div>
 
