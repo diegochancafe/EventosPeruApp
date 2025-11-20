@@ -17,7 +17,7 @@ class CategoryController extends Controller
         if ($user->role === 'client') {
             return response()->json([
                 'data' => [],
-                'message' => 'Los clientes no pueden ver los servicios',
+                'message' => 'MENSAJE DE SEGURIDAD: Los clientes no tienen permiso de ver los servicios',
                 'status' => 'error'
             ], 403);
         }
